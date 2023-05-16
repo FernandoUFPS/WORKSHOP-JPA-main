@@ -4,7 +4,7 @@ import com.remolina.workshop.dto.CitaDTO;
 import com.remolina.workshop.exception.BadRequestException;
 import com.remolina.workshop.model.TipoUsuario;
 import com.remolina.workshop.repository.CitaRepository;
-import com.remolina.workshop.service.CitaService;
+import com.remolina.workshop.service.CitaMService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -14,13 +14,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.time.LocalDate;
 
 @RunWith(MockitoJUnitRunner.class)
-    public class CitaServiceTest {
+    public class CitaMServiceTest {
 
         @Mock
         private CitaRepository citaRepository;
 
         @InjectMocks
-        private CitaService citaService;
+        private CitaMService citaMService;
 
         @Test(expected = BadRequestException.class)
         public void agendarCita_shouldThrowBadRequestException_whenEspecialidadIsNull() {
@@ -29,7 +29,7 @@ import java.time.LocalDate;
             citaDTO.setTipoUsuario(TipoUsuario.EPS);
             citaDTO.setFechaCita(LocalDate.now().plusDays(10));
 
-            citaService.agendarCita(citaDTO);
+            citaMService.agendarCita(citaDTO);
         }
 
         @Test(expected = BadRequestException.class)
@@ -39,7 +39,7 @@ import java.time.LocalDate;
             citaDTO.setTipoUsuario(TipoUsuario.EPS);
             citaDTO.setFechaCita(LocalDate.now().plusDays(10));
 
-            citaService.agendarCita(citaDTO);
+            citaMService.agendarCita(citaDTO);
         }
 
         @Test(expected = BadRequestException.class)
@@ -49,7 +49,7 @@ import java.time.LocalDate;
             citaDTO.setIdentificacionUsuario("123456");
             citaDTO.setFechaCita(LocalDate.now().plusDays(10));
 
-            citaService.agendarCita(citaDTO);
+            citaMService.agendarCita(citaDTO);
         }
 
         @Test(expected = BadRequestException.class)
@@ -59,7 +59,7 @@ import java.time.LocalDate;
             citaDTO.setIdentificacionUsuario("123456");
             citaDTO.setTipoUsuario(TipoUsuario.EPS);
 
-            citaService.agendarCita(citaDTO);
+            citaMService.agendarCita(citaDTO);
         }
 
 

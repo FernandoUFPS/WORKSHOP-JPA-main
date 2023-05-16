@@ -13,11 +13,11 @@ import java.time.temporal.TemporalAdjuster;
 import java.util.Optional;
 
 @Service
-public class CitaService {
+public class CitaMService {
     private CitaRepository citaRepository;
 
     @Autowired
-    public CitaService(CitaRepository citaRepository) {
+    public CitaMService(CitaRepository citaRepository) {
         this.citaRepository = citaRepository;
     }
 

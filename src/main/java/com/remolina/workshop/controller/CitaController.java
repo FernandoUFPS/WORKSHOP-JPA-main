@@ -3,7 +3,7 @@ package com.remolina.workshop.controller;
 import com.remolina.workshop.dto.CitaDTO;
 import com.remolina.workshop.exception.BadRequestException;
 import com.remolina.workshop.exception.NotFoundException;
-import com.remolina.workshop.service.CitaService;
+import com.remolina.workshop.service.CitaMService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +18,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1")
 public class CitaController {
     @Autowired
-    private CitaService citaService;
+    private CitaMService citaMService;
 
     @Autowired
-    public CitaController(CitaService citaService) {
-        this.citaService = citaService;
+    public CitaController(CitaMService citaMService) {
+        this.citaMService = citaMService;
     }
 
     @PostMapping("/agendar")
     public ResponseEntity<?> agendarCita(@RequestBody CitaDTO citaDTO) {
         try {
-            CitaDTO citaCreada = citaService.agendarCita(citaDTO);
+            CitaDTO citaCreada = citaMService.agendarCita(citaDTO);
             return new ResponseEntity<>(citaCreada, HttpStatus.CREATED);
         } catch (BadRequestException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -38,7 +38,7 @@ public class CitaController {
     @GetMapping("/agendar/{id}")
     public ResponseEntity<?> obtenerCita(@PathVariable("id") Long idCita) {
         try {
-            CitaDTO citaObtenida = citaService.obtenerCita(idCita);
+            CitaDTO citaObtenida = citaMService.obtenerCita(idCita);
             return new ResponseEntity<>(citaObtenida, HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

@@ -2,20 +2,28 @@ package com.remolina.workshop.configurer;
 
 import com.remolina.workshop.controller.CitaController;
 import com.remolina.workshop.repository.CitaRepository;
-import com.remolina.workshop.service.CitaService;
+import com.remolina.workshop.service.CitaMService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-
+import java.sql.DriverManager;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+
 @Configuration
-@EnableTransactionManagement
+@ComponentScan({"com.remolina"})
+@EnableJpaRepositories(basePackages = "com.remolina", entityManagerFactoryRef = "entityManagerFactory")
+@EntityScan(basePackages = "com.remolina")
 public class AppConfig {
 
     @Value("${spring.datasource.driver-class-name}")
@@ -30,49 +38,26 @@ public class AppConfig {
     @Value("${spring.datasource.password}")
     private String password;
 
+
     @Bean
     public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(driverClassName);
-        dataSource.setUrl(url);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        return dataSource;
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.H2)
+                .build();
     }
 
     @Bean
-    public LocalSessionFactoryBean sessionFactory() {
-        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-        sessionFactory.setDataSource(transactionManager().getDataSource());
-        sessionFactory.setPackagesToScan("com.example.workshop.model");
-        sessionFactory.setHibernateProperties(hibernateProperties());
-        return sessionFactory;
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
     }
-
-    private Properties hibernateProperties() {
-        Properties properties = new Properties();
-        properties.put("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
-        properties.put("hibernate.show_sql", "true");
-        properties.put("hibernate.format_sql", "true");
-        properties.put("hibernate.hbm2ddl.auto", "create-drop");
-        return properties;
+    @Bean
+    public CitaMService citaMService(CitaRepository citaRepository) {
+        return new CitaMService(citaRepository);
     }
 
     @Bean
-    public HibernateTransactionManager transactionManager() {
-        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-        transactionManager.setSessionFactory(sessionFactory().getObject());
-        return transactionManager;
-    }
-
-    @Bean
-    public CitaService citaService(CitaRepository citaRepository) {
-        return new CitaService(citaRepository);
-    }
-
-    @Bean
-    public CitaController citaController(CitaService citaService) {
-        return new CitaController(citaService);
+    public CitaController citaController(CitaMService citaMService) {
+        return new CitaController(citaMService);
     }
 
 
