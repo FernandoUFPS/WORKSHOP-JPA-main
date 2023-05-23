@@ -61,6 +61,24 @@ import java.time.LocalDate;
 
             citaMService.agendarCita(citaDTO);
         }
+        
+        @Test public void agendarCita_shouldSucceed() {
+        CitaDTO citaDTO = new CitaDTO();
+        citaDTO.setEspecialidad("Cardiología");
+        citaDTO.setIdentificacionUsuario("123456");
+        citaDTO.setTipoUsuario(TipoUsuario.EPS);
+        citaDTO.setFechaCita(LocalDate.now().plusDays(10));
+
+        // Realizar la llamada al método agendarCita y obtener el resultado
+        CitaDTO resultadoCita = citaMService.agendarCita(citaDTO);
+
+        // Verificar que el resultado no sea nulo
+        Assert.assertNotNull(resultadoCita);
+        Assert.assertEquals("Cardiología", resultadoCita.getEspecialidad());
+        Assert.assertEquals("123456", resultadoCita.getIdentificacionUsuario());
+        Assert.assertEquals(TipoUsuario.EPS, resultadoCita.getTipoUsuario());
+        Assert.assertEquals(LocalDate.now().plusDays(10), resultadoCita.getFechaCita());
+    }
 
 
 
